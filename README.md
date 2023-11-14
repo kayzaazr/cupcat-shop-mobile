@@ -80,7 +80,7 @@ List<Cupcat> products = [];
 2. Menambahkan file baru shopitem_list.dart pada folder screens untuk memunculkan produk-produk yang pernah dibuat.
 3. Membuat fungsi untuk membuat objek baru dari class Cupcat, dan menambahkannya ke list products setiap tombol save pada shoplist_form.dart ditekan.
 4. Menambahkan file baru shopitem_list.dart pada folder screens untuk memunculkan produk-produk yang pernah dibuat.
-5. Membuat objek baru dari class Product
+5. Membuat objek baru dari class Cupcat
    ```
    class Cupcat {
     final String name;
