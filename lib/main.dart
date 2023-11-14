@@ -1,5 +1,8 @@
-import 'package:cupcat_shop/menu.dart';
+import 'package:cupcat_shop/screens/menu.dart';
+import 'package:cupcat_shop/models/cupcat_items.dart';
 import 'package:flutter/material.dart';
+
+List<Cupcat> products = [];
 
 void main() {
   runApp(const MyApp());
