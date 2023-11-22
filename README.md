@@ -1,6 +1,127 @@
 # cupcat_shop
 
-##  Tugas 8
+## Tugas 9
+### Apakah bisa kita melakukan pengambilan data JSON tanpa membuat model terlebih dahulu? Jika iya, apakah hal tersebut lebih baik daripada membuat model sebelum melakukan pengambilan data JSON?
+Bisa, kita dapat mengambil data JSON dari Django ke Flutter tanpa perlu membuat model di Flutter. Namun, umumnya lebih disarankan untuk membuat model di Flutter karena hal ini memberikan keunggulan dalam validasi tipe data, abstraksi tingkat tinggi, serta memudahkan pemeliharaan kode.
+
+### Jelaskan fungsi dari CookieRequest dan jelaskan mengapa instance CookieRequest perlu untuk dibagikan ke semua komponen di aplikasi Flutter.
+Fungsi CookieRequest:
+- Memastikan bahwa seluruh aplikasi Flutter menggunakan sumber data yang konsisten
+- Memudahkan pembaruan dan akses data dari berbagai bagian aplikasi.
+- Mengurangi redundansi kode dengan menghindari pengulangan pembuatan objek
+- Mendukung pemodelan arsitektur aplikasi yang terstruktur
+- Memberikan fleksibilitas dalam membuat perubahan
+
+Instance CookieRequest yang dibagikan ke semua komponen dapat diakses dengan mudah dari mana saja dalam aplikasi, memfasilitasi pembaruan dan pengaksesan data tanpa perlu menghubungkan ulang objek tersebut di setiap widget. Hal ini dengan kata lain dapat mengurangi redundansi kode.
+
+### Jelaskan mekanisme pengambilan data dari JSON hingga dapat ditampilkan pada Flutter.
+1. Memanfaatkan situs web QuickType seperti yang direkomendasikan pada tutorial sebelumnya.
+2. Mengambil data json pada url `http://localhost:8000/json`, lalu copy code tersebutdan tambahkan ke `cupcat_shop/models/product.dart`.
+3. Melakukan Fetch Data dan menampilkan pada flutter dengan menambahkan potongan kode berikut pada file `list_product.dart`
+```
+import 'package:cupcat_shop/widgets/left_drawer.dart';
+
+class ProductPage extends StatefulWidget {
+    const ProductPage({Key? key}) : super(key: key);
+
+    @override
+    _ProductPageState createState() => _ProductPageState();
+}
+
+class _ProductPageState extends State<ProductPage> {
+Future<List<Product>> fetchProduct() async {
+.......
+```
+4. Menambahkan halaman `list_product.dart` ke `widgets/left_drawer.dart`
+5. Tambahkan kode ListTile dan tambahkan navigator untuk menampilkan halaman product.
+
+### Jelaskan mekanisme autentikasi dari input data akun pada Flutter ke Django hingga selesainya proses autentikasi oleh Django dan tampilnya menu pada Flutter.
+1. Permintaan Login dari Flutter ke Django:  
+  - Pengguna memasukkan informasi login di Flutter.
+  - Permintaan HTTP POST dikirim ke endpoint login Django.
+2. Fungsi Login di Django:
+  - Django memverifikasi kredensial dengan authenticate.
+  - Jika valid, pengguna ditandai sebagai terautentikasi dengan auth_login.
+3. Respon ke Flutter:
+  - Django mengirimkan respons JSON ke Flutter dengan status login.
+  - Sukses: Berisi informasi pengguna dan pesan sukses.
+  - Gagal: Berisi pesan kesalahan dan status 401 jika tidak diizinkan.
+4. Pengolahan Respon di Flutter:
+  - Flutter mengelola respons, menyimpan token atau mengambil tindakan selanjutnya.
+
+### Sebutkan seluruh widget yang kamu pakai pada tugas ini dan jelaskan fungsinya masing-masing.
+1. Drawer: Menyediakan panel yang dapat digeser dari sisi layar untuk menyimpan menu dan navigasi.
+2. ListTile: Mewakili item pada daftar dalam `Drawer`.
+3. Material: Mengatur warna latar belakang dari card.
+4. InkWell: Memberikan efek responsif ketika card ditekan.
+5. FutureBUilder: Digunakan untuk membangun tampilan yang berbeda tergantung pada status Future, seperti menampilkan loading atau hasil data.
+6. CookieRequest (dari Provider): Digunakan sebagai dependency untuk melakukan logout dan menangani permintaan berbasis cookie.
+
+### Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step! (bukan hanya sekadar mengikuti tutorial).
+1. Jalankan `python manage.py startapp authentication` pada terminal projek django cupcat_shop
+2. Install library `django-cors-headers`.
+3. Tambahkan beberapa variable pada `cupcat_shop/setting.py`.
+4. Membuat method view untuk login pada `authentication/views.py`.
+5. jalankan `flutter pub add provider` dan `flutter pub add pbp_django_auth` pada terminal flutter.
+6. Modifikasi root widget untuk menyediakan CookieRequest library ke semua child widgets dengan menggunakan Provider.
+7. Membuat file baru `login.dart` pada folder `screens`.
+8.  Memanfaatkan situs web QuickType seperti yang direkomendasikan pada tutorial sebelumnya.
+9. Mengambil data json pada url `http://localhost:8000/json`, lalu copy code tersebutdan tambahkan ke `cupcat_shop/models/product.dart`.
+10. Melakukan Fetch Data dan menampilkan pada flutter dengan menambahkan potongan kode berikut pada file `list_product.dart`
+```
+import 'package:cupcat_shop/widgets/left_drawer.dart';
+
+class ProductPage extends StatefulWidget {
+    const ProductPage({Key? key}) : super(key: key);
+
+    @override
+    _ProductPageState createState() => _ProductPageState();
+}
+
+class _ProductPageState extends State<ProductPage> {
+Future<List<Product>> fetchProduct() async {
+.......
+```
+11. Menambahkan halaman `list_product.dart` ke `widgets/left_drawer.dart`
+12. Tambahkan kode ListTile dan tambahkan navigator untuk menampilkan halaman product.
+13. Membuat sebuah fungsi baru pada `main/views.py`
+```
+@csrf_exempt
+def create_product_flutter(request):
+    if request.method == 'POST':
+        
+        data = json.loads(request.body)
+
+        new_product = Product.objects.create(
+            user = request.user,
+            name = data["name"],
+            price = int(data["price"]),
+            description = data["description"],
+            sweetness = int(data["sweetness"]),
+            amount = int(data["amount"]),
+        )
+
+        new_product.save()
+
+        return JsonResponse({"status": "success"}, status=200)
+    else:
+        return JsonResponse({"status": "error"}, status=401)
+```
+14. Hubungkan halaman shoplist_form.dart dengan CookieRequest dengan menambahkan baris kode
+```
+Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
+
+    return Scaffold(
+...
+```
+15. Mengubah perintah onPressed menjadi async dan mengganti isi kode sesuai yang ada di tutorial.
+16. Membuat fungsi logout pada `authentication/views.py`.
+17. Pada proyek flutter, tambahkan `final request = context.watch<CookieRequest>();` ke bagian `shop_card.dart`.
+18. Mengubah perintah OnTap pada widget `InkWell` agar dapat melakukan proses logout secara asynchronus.
+
+<details>
+<summary> Tugas 8 </summary>
 ### Jelaskan perbedaan antara `Navigator.push()` dan `Navigator.pushReplacement()`, disertai dengan contoh mengenai penggunaan kedua metode tersebut yang tepat!
 
 `Navigator.push()` dan `Navigator.pushReplacement()` adalah dua metode yang digunakan dalam Flutter untuk menavigasi antara layar (routes) dalam aplikasi. Perbedaan utama antara keduanya terletak pada cara mereka memanipulasi tumpukan navigasi.
@@ -96,6 +217,7 @@ List<Cupcat> products = [];
 7. Menambahkan objek baru tersebut ke list products setiap tombol save pada `shoplist_form.dart` ditekan.
 8. Membuat ListTile baru dengan nama Lihat Produk pada Left Drawer
 Membuat routing dari Left Drawer dan tombol Lihat Produk di home ke page untuk melihat semua produk di `shopitem_list.dart`
+</details>
 
 <details>
 <summary> Tugas 7 </summary>
