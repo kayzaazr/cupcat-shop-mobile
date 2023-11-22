@@ -1,8 +1,8 @@
+import 'package:cupcat_shop/screens/list_product.dart';
 import 'package:flutter/material.dart';
 import 'package:cupcat_shop/screens/menu.dart';
 import 'package:cupcat_shop/main.dart';
 import 'package:cupcat_shop/screens/shoplist_form.dart';
-import 'package:cupcat_shop/screens/shopitem_list.dart';
 
 // TODO: Impor halaman ShopFormPage jika sudah dibuat
 
@@ -69,15 +69,13 @@ class LeftDrawer extends StatelessWidget {
             title: const Text('Lihat Produk'),
             // Bagian redirection ke ShopFormPage
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => ProductListPage(
-                        products:
-                            products)), // Replace with your actual ShopFormPage route.
-              );
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProductPage(),
+                  ));
             },
-          )
+          ),
         ],
       ),
     );
